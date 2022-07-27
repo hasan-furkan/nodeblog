@@ -1,10 +1,17 @@
+const path = require("path")
 const express = require("express")
 const app = express()
 const engine = require('express-handlebars');
 const hostName = "127.0.0.1";
 const port = 5000
+const mongoose = require("mongoose")
 
-const path = require("path")
+
+mongoose.connect('mongodb://127.0.0.1/nodeblog_db', {
+    useNewUrlParse: true,
+    useUnifiedTopology: true
+});
+
 
 app.use(express.static("public"))
 
@@ -22,6 +29,19 @@ app.get("/about", (req, res) => {
 app.get("/blog", (req, res) => {
     res.render('site/blog');
 })
+
+app.get("/contact", (req, res) => {
+    res.render('site/contact');
+})
+
+app.get("/login", (req, res) => {
+    res.render('site/login');
+})
+
+app.get("/register", (req, res) => {
+    res.render('site/register');
+})
+
 
 app.listen(port, hostName, () => console.log(`server calisiyor http://${hostName}:${port}/`))
 
