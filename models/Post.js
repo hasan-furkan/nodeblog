@@ -3,11 +3,11 @@ const mongoose = require("mongoose");
 const PostSchema = new mongoose.Schema({
   title: {
     type: String,
-    require: true,
+    required: true,
   },
   content: {
     type: String,
-    require: true,
+    required: true,
   },
   date: {
     type: Date, 
@@ -15,7 +15,7 @@ const PostSchema = new mongoose.Schema({
   },
   post_image: {
     type: String,
-    require: true,
+    required: true,
   }
 });
 

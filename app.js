@@ -7,6 +7,7 @@ const port = 5000
 const mongoose = require("mongoose")
 const bodyParser = require('body-parser')
 const fileUpload = require("express-fileupload")
+const moment = require("moment")
 
 mongoose.connect('mongodb://127.0.0.1/nodeblog_db', {
     useNewUrlParser: true,
@@ -18,7 +19,15 @@ app.use(fileUpload())
 
 app.use(express.static("public"))
 
-app.engine('handlebars', engine.engine());
+const hbs = engine.create({
+  helpers: {
+    generateDate : (date, format) => {
+      return moment(date).format(format)
+    }
+  }
+})
+
+app.engine('handlebars', hbs.engine());
 app.set('view engine', 'handlebars');
 
 // parse application/x-www-form-urlencoded
@@ -26,6 +35,13 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(bodyParser.json())
+
+const myMiddleware = (req, res, next) => {
+  console.log("LOGGED")
+  next()
+}
+
+app.use("/", myMiddleware)
 
 const main = require("./routes/main")
 app.use("/", main)
