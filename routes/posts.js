@@ -1,17 +1,22 @@
 const express = require("express")
 const router = express.Router()
 const Post = require("../models/Post")
+const path = require("path")
 
 router.get("/new", (req, res) => {
     res.render('site/addpost');
 })
 
 router.post("/test", (req, res) => {
-    Post.create(req.body,
-  (err, post) => {
-    console.log(err, post);
-  }
-);
+
+  let post_image = req.files.post_image
+
+  post_image.mv(path.resolve(__dirname, "../public/img/postimages", post_image.name))
+
+    Post.create({
+      ...req.body,
+      post_image:`/img/postimages/${post_image.name}` 
+    })
     res.redirect("/")
 })
 

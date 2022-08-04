@@ -6,12 +6,15 @@ const hostName = "127.0.0.1";
 const port = 5000
 const mongoose = require("mongoose")
 const bodyParser = require('body-parser')
+const fileUpload = require("express-fileupload")
 
 mongoose.connect('mongodb://127.0.0.1/nodeblog_db', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
 
+
+app.use(fileUpload())
 
 app.use(express.static("public"))
 
