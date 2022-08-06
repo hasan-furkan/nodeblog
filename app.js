@@ -8,12 +8,29 @@ const mongoose = require("mongoose")
 const bodyParser = require('body-parser')
 const fileUpload = require("express-fileupload")
 const generateDate = require("./helpers/generateDate").generateDate
+const expressSession = require("express-session")
+const MongoStore = require('connect-mongo');
 
 mongoose.connect('mongodb://127.0.0.1/nodeblog_db', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
 
+app.use(expressSession({
+    secret: "testotesto",
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1/nodeblog_db' })
+}))
+
+
+// Flash - Message Middleware
+
+app.use((req,res, next) => {
+  res.locals.sessionFlash = req.session.sessionFlash
+  delete req.session.sessionFlash
+    next()
+})
 
 app.use(fileUpload())
 
@@ -40,21 +57,32 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-const myMiddleware = (req, res, next) => {
-  console.log("LOGGED")
-  next()
-}
+// DISPLAY LINK Middleware
 
-app.use("/", myMiddleware)
+app.use((req,res,next) => {
+    const {userId} = req.session
+    if(userId) {
+        res.locals = {
+            displayLink: true
+        }
+    }else {
+        res.locals = {
+            displayLink: false
+        }
+    }
+    next()
+})
 
-const main = require("./routes/main")
+
+const main = require("./routes/main");
+const posts = require("./routes/posts");
+const users = require("./routes/users");
+const admin = require("./routes/admin/index");
+
 app.use("/", main)
-
-const posts = require("./routes/posts")
 app.use("/posts", posts)
-
-const users = require("./routes/users")
 app.use("/users", users)
+app.use("/admin", admin)
 
 app.listen(port, hostName, () => console.log(`server calisiyor http://${hostName}:${port}/`))
 

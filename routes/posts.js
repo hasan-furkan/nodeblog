@@ -5,7 +5,10 @@ const path = require("path")
 
 
 router.get("/new", (req, res) => {
-    res.render('site/addpost');
+  if(req.session.userId){
+    return res.render('site/addpost');
+  }
+  res.redirect("/users/login")
 })
 
 router.get("/:id", (req, res) => {
@@ -23,8 +26,13 @@ router.post("/test", (req, res) => {
     Post.create({
       ...req.body,
       post_image:`/img/postimages/${post_image.name}` 
-    })
-    res.redirect("/")
+    },)
+  req.session.sessionFlash = {
+    type: "alert alert-success",
+    message: "Post başarılı bir şekilde eklendi"
+  }
+    res.redirect("/blog")
 })
+
 
 module.exports = router
