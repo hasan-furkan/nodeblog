@@ -1,9 +1,14 @@
 const mongoose = require("mongoose");
+const {Schema} = require("mongoose");
 
 const PostSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
+  },
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: "users"
   },
   content: {
     type: String,
@@ -12,6 +17,10 @@ const PostSchema = new mongoose.Schema({
   date: {
     type: Date, 
     default: Date.now
+  },
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: "categories"
   },
   post_image: {
     type: String,
