@@ -16,8 +16,21 @@ router.get("/new", (req, res) => {
 
 router.get("/:id", (req, res) => {
   Post.findById(req.params.id).then((post) => {
-   Category.find({}).lean().then(categories => {
-     res.render("site/post", { post: post.toJSON(), categories: categories });
+   Category.aggregate([{$lookup: {
+       from: "posts",
+       localField: "_id",
+       foreignField: "category",
+       as: "posts"
+     }},{
+     $project : {
+       _id : 1,
+       name : 1,
+       num_off_posts: {$size : "$posts"}
+     }
+   }]).then(categories => {
+     Post.find({}).populate({path: "author", model: User}).sort({$natural:-1}).lean().then(posts => {
+       res.render("site/post", { post: post.toJSON(), categories: categories, posts:posts });
+     })
    })
   });
 });

@@ -7,6 +7,7 @@ const port = 5000
 const mongoose = require("mongoose")
 const bodyParser = require('body-parser')
 const fileUpload = require("express-fileupload")
+const limit = require("./helpers/limit").limit
 const generateDate = require("./helpers/generateDate").generateDate
 const expressSession = require("express-session")
 const MongoStore = require('connect-mongo');
@@ -41,19 +42,19 @@ app.use(express.static("public"))
 
 app.use(methodOverride('_method'))
 
-// const hbs = engine.create({
-//     helpers: {
-//         generateDate : (date, format) => {
-//             return moment(date).format(format)
-//         }
-//     }
-// })
 
 // app.engine('handlebars', hbs);
+/////// HANDLEBARS HELPERS
 
-app.engine('handlebars', engine.engine({helpers: {
-    generateDate: generateDate
-    }}));
+
+const hbs = engine.create({
+    helpers: {
+        generateDate: generateDate,
+        limit : limit
+    }
+})
+
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
 // parse application/x-www-form-urlencoded
