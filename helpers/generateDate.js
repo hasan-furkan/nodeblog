@@ -1,7 +1,6 @@
-const moment = require("moment")
-require('moment/locale/tr');
+const moment = require("moment");
 module.exports = {
     generateDate : (date, format) => {
         return moment(date).format(format)
-    }
+    },
 }

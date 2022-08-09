@@ -28,7 +28,7 @@ router.get("/:id", (req, res) => {
        num_off_posts: {$size : "$posts"}
      }
    }]).then(categories => {
-     Post.find({}).populate({path: "author", model: User}).sort({$natural:-1}).lean().then(posts => {
+     Post.find({}).lean().populate({path: "categories", model: Category}).populate({path: "author", model: User}).sort({$natural:-1}).lean().then(posts => {
        res.render("site/post", { post: post.toJSON(), categories: categories, posts:posts });
      })
    })
@@ -51,6 +51,32 @@ router.post("/test", (req, res) => {
     message: "Post başarılı bir şekilde eklendi"
   }
     res.redirect("/blog")
+})
+
+function escapeRegex(text) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
+
+router.get("/search", (req, res) => {
+  if (req.query.look) {
+    const regex = new RegExp(escapeRegex(req.query.look), 'gi');
+    Post.find({}).lean().populate({path: "author", model: User}).sort({$natural:-1}).lean().then(posts => {
+      Category.aggregate([{$lookup: {
+          from: "posts",
+          localField: "_id",
+          foreignField: "category",
+          as: "posts"
+        }},{
+        $project : {
+          _id : 1,
+          name : 1,
+          num_off_posts: {$size : "$posts"}
+        }
+      }]).then(categories => {
+        res.render("site/blog", {posts: posts, categories: categories})
+      })
+    })
+  }
 })
 
 

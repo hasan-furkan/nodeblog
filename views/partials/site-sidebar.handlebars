@@ -2,14 +2,17 @@
 
     <div class="widget">
         <div class="widget-search">
+            <form action="/posts/search" method="get">
             <input
                     class="search-input form-control"
                     type="text"
                     placeholder="Search"
+                    name="look"
             />
-            <button class="search-btn" type="button"><i
-                    class="fas fa-search"
-            ></i></button>
+            <button class="search-btn" type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+            </form>
         </div>
     </div>
     <!-- /Search -->
@@ -20,7 +23,7 @@
     <h3 class="mb-3">Categories</h3>
     <div class="widget-category">
         {{#each categories}}
-        <a href="#">{{name}}<span>({{num_off_posts}})</span></a>
+        <a href="posts/category/{{_id}}">{{name}}<span>({{num_off_posts}})</span></a>
         {{/each}}
     </div>
 </div>
@@ -42,7 +45,7 @@
         </div>
         {{/each}}
         <!-- /single post -->
-    </div>n
+    </div>
     <!-- /Posts sidebar -->
 
 </aside>
